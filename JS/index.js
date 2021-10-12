@@ -48,7 +48,10 @@ btn.addEventListener('click',()=>{
 
 
 $(function () {
-  $("#accordion").accordion();
+  $( "#accordion" ).accordion();
+  $( "#accordion" ).accordion({
+    collapsible: true
+  });
 });
 
 const publicationSwiper = new Swiper('.swiper-publication', {
@@ -116,19 +119,14 @@ function init() {
   myMap.geoObjects.add(myPlacemark);
 }
 
-const flagsButton = document.querySelectorAll('.catalog__button');
-flagsButton.forEach(i=>{
-  console.log('i',i)
-  i.addEventListener('click',(event)=>{
-    console.log('event',event)
-    flagsButton.forEach(b=>{
-      b.classList.remove('flag-active')
-    })
-    event.path[1].classList.add('flag-active')
+document.querySelectorAll(".catalog__item").forEach(item => {
+	item.addEventListener("click", function() {
+  		let btn = this;
+      btn.classList.add("item-active");
+      document.querySelectorAll(".catalog__item").forEach(el => (el != btn) ? el.classList.remove("item-active") : false);
   })
- 
-  
 })
+
 
 var selector = document.getElementById("input-tel");
 
@@ -161,47 +159,88 @@ new JustValidate('.form', {
 
   });
 
-  const listButton = document.querySelectorAll('.hero__item-btn');
-  const listPopup =  Array.prototype.slice.call(document.querySelectorAll('.btn-list')); 
-  listButton.forEach(i=>{
-    console.log('i',i)
-    i.addEventListener('click',(event)=>{
-      console.log('event',event)
-      listButton.forEach(b=>{
-        b.classList.remove('button-active')
-      })
-      event.path[0].classList.add('button-active')
-      const listId = event.path[0].dataset.list
-      const current = listPopup.find(e => {
-        return e.dataset.list === listId
-    
+
+
+  document.querySelectorAll(".hero__item-btn").forEach(item => {
+    item.addEventListener("click", function() {
+      let btn = this;
+      let dropdown = this.parentElement.querySelector(".btn-list");
       
+      document.querySelectorAll(".hero__item-btn").forEach(el => {
+        if (el != btn) {
+          el.classList.remove("button-active");
+        }
+      });
+      
+      document.querySelectorAll(".btn-list").forEach(el => {
+        if (el != dropdown) {
+          el.classList.remove("btn-list-active");
+        }
       })
-      listPopup.forEach(b=>{
-        b.classList.remove('btn-list-active')
-      })
-      console.log( current, listPopup )
-      current.classList.add('btn-list-active')
+      dropdown.classList.toggle("btn-list-active");
+      btn.classList.toggle("button-active")
     })
-   
-    
-  })  
+  })
+
+
+  document.addEventListener("click", function(e) {
+    let target = e.target;
+    if (!target.closest(".hero__list")) {
+      document.querySelectorAll(".btn-list").forEach(el => {
+          el.classList.remove("btn-list-active");
+      })
+       document.querySelectorAll(".hero__item-btn").forEach(el => {
+          el.classList.remove("button-active");
+      });
+    }
+  })
+  
+
+  $(document).ready (function(){
+    const flags = Array.from(document.querySelectorAll('.catalog__button'));
+    const flagsContentsAll = Array.from(document.querySelectorAll(`.catalog__wrapper *`));
+    const Contents = Array.from(document.querySelectorAll(`.catalog__wrapper [data-flag="it"]`));
+    Contents.forEach(i=>{
+      i.classList.add("catalog-active")
+    })
+   flags.forEach(item=>{
+     
+     item.addEventListener("click", function(e) {
+      $("#accordion").accordion('option', 'active', false);
+       console.log(e)
+       const type = e.target.dataset.flag
+       const flagsContents = Array.from(document.querySelectorAll(`.catalog__wrapper [data-flag="${type}"]`));
+       console.log(type)
+      //  const currentContent = flagsContents.find(i=>i.dataset.flag === type)
+       flagsContentsAll.forEach(i=>{
+         i.classList.remove("catalog-active")
+       })
+       flagsContents.forEach(i=>{
+        i.classList.add("catalog-active")
+      })
+     })
+   })
+
+  })
+
+  tippy('.tooltip__one', {
+    content: 'Пример современных тенденций - современная методология разработки',
+  });
+
+  tippy('.tooltip__two', {
+    content: 'Приятно, граждане, наблюдать, как сделанные на базе аналитики выводы вызывают у вас эмоции',
+  });
+
+  tippy('.tooltip__three', {
+    content: 'В стремлении повысить качество',
+  });
+
+
+ 
+
+
 
 
   
 
 
-// // Close the dropdown menu if the user clicks outside of it
-// window.onclick = function(event) {
-//   if (!event.target.matches('btn-list')) {
-
-//     var dropdowns = document.getElementsByClassName("btn-list");
-//     var i;
-//     for (i = 0; i < dropdowns.length; i++) {
-//       var openDropdown = dropdowns[i];
-//       if (openDropdown.classList.contains('btn-list-active')) {
-//         openDropdown.classList.remove('btn-list-active');
-//       }
-//     }
-//   }
-// }
